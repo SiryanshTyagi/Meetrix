@@ -18,11 +18,28 @@ import { Server } from "socket.io";
 
 dotenv.config(); /// to read .env variables
 const app = express();
-const corsOrigin = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(",").map((origin) => origin.trim())
-  : "*";
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(cors({ origin: corsOrigin }));
+const isOriginAllowed = (origin) =>
+  allowedOrigins.length === 0 || allowedOrigins.includes(origin);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || isOriginAllowed(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Origin not allowed by CORS"));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 // =====================
@@ -36,7 +53,13 @@ const server = http.createServer(app);
 // CORS allows frontend to connect
 const io = new Server(server, {
   cors: {
-    origin: corsOrigin,
+    origin: (origin, callback) => {
+      if (!origin || isOriginAllowed(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Origin not allowed by CORS"));
+    },
+    credentials: true,
   },
 });
 
