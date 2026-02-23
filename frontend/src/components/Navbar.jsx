@@ -48,10 +48,10 @@ function Navbar() {
           </Avatar>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.1 }}>
-              ConnectCall
+              Meetrix
             </Typography>
             <Typography variant="caption" sx={{ opacity: 0.86 }}>
-              Secure MERN video meetings
+              Secure video meetings
             </Typography>
           </Box>
         </Box>
