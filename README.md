@@ -1,132 +1,294 @@
-# Video Conferencing App
+# 🖥️ Meetrix – Real-Time Multi-User Video Conferencing Platform
 
-A full-stack real-time video conferencing app built with React, Node.js, Express, MongoDB, Socket.IO, and WebRTC.
+Meetrix is a full-stack, real-time video conferencing application built using **WebRTC** and **Socket.io**.  
+It enables secure multi-user video communication using a **peer-to-peer mesh architecture**.
 
-## Features
+This project demonstrates advanced real-time system design, WebRTC signaling implementation, authentication security, and scalable room-based communication.
 
-- JWT-based user authentication (register/login)
+---
+
+## 🌐 Live Deployment
+
+**Frontend (Vercel):**  
+https://meetrix-five.vercel.app/
+
+**Backend (Render):**  
+https://meetrix-5bop.onrender.com/
+
+---
+
+# ✨ Core Features
+
+## 🎥 Real-Time Video Calling
+- Peer-to-peer video & audio streaming
+- WebRTC media negotiation
+- ICE candidate exchange
+- Dynamic stream handling
+
+## 👥 Multi-User Mesh Architecture
+- Fully connected peer mesh topology
+- Each participant establishes direct connections with all others
+- Real-time join/leave synchronization
+- Automatic peer cleanup on disconnect
+
+## 🔐 Secure Authentication
+- JWT-based authentication
+- bcrypt password hashing
 - Protected frontend routes
-- Create and join meeting rooms by ID
-- Real-time room events with Socket.IO
-- Peer-to-peer audio/video calls with WebRTC signaling
-- Screen sharing support
-- In-room text chat
-- Room participant cap (max 5 users)
+- Backend token verification middleware
 
-## Tech Stack
+## 📡 Socket-Based Signaling Server
+- WebRTC offer/answer exchange via Socket.io
+- ICE candidate propagation
+- Room-based signaling isolation
+- Real-time user presence updates
 
-### Frontend
+## 🏠 Room Management System
+- Create or join unique rooms
+- Room-based socket isolation
+- Dynamic participant handling
+- Real-time peer updates
 
-- React 19 + Vite
-- Material UI
-- React Router
-- Axios
-- Socket.IO client
+---
 
-### Backend
+# 🏗 System Architecture
 
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT + bcryptjs
-- Socket.IO
-
-## Project Structure
-
-```text
-socket/
-  backend/
-    index.js
-    routes/
-    middlewares/
-    models/
-  frontend/
-    src/
-      pages/
-      components/
-      hooks/
+```
+User Browser
+      ↓
+React + Vite (Frontend - Vercel)
+      ↓ WebSocket (Socket.io)
+Express.js Signaling Server (Render)
+      ↓
+WebRTC Peer Connections (Mesh Network)
+      ↓
+Direct Peer-to-Peer Media Streams
 ```
 
-## Prerequisites
+---
 
-- Node.js 18+
-- npm
-- MongoDB instance (local or cloud)
+# 🧠 Deep Technical Architecture
 
-## Environment Variables
+## 1️⃣ Authentication Layer
 
-### Backend (`backend/.env`)
+- User registers → Password hashed using bcrypt
+- JWT generated upon login
+- JWT stored client-side
+- Protected routes verify token before allowing room access
 
-Copy `backend/.env.example` and set values:
+This ensures:
+- Stateless authentication
+- Secure user isolation
+- Controlled room entry
 
-```env
-MONGO_URL=your_mongodb_connection_string
-PORT=3000
-JWT_SECRET=your_strong_jwt_secret
-FRONTEND_URL=http://localhost:5173
+---
+
+## 2️⃣ WebRTC Signaling Flow
+
+WebRTC requires a signaling mechanism to exchange connection metadata.
+
+Meetrix implements custom signaling using Socket.io.
+
+### Connection Flow:
+
+1. User joins a room
+2. Socket connects to room
+3. Existing users are notified
+4. New RTCPeerConnection created
+5. Offer generated
+6. Offer sent via socket
+7. Answer returned
+8. ICE candidates exchanged
+9. Peer connection established
+10. Media streams flow directly peer-to-peer
+
+---
+
+## 3️⃣ Multi-User Mesh Topology
+
+Meetrix uses a Mesh Architecture.
+
+
+If there are **N users**:
+
+Each user connects to **N - 1 peers**
+
+Total connections:
+
+```
+N * (N - 1) / 2
 ```
 
-### Frontend (`frontend/.env`)
+### Example:
+- 4 users → 6 total peer connections  
+- 5 users → 10 connections  
 
-Copy `frontend/.env.example` and set values:
+### Why Mesh?
+- No media server required
+- Pure peer-to-peer communication
+- Ideal for small group conferencing
+- Demonstrates deep WebRTC understanding
 
-```env
-VITE_API_URL=http://localhost:3000
-VITE_SOCKET_URL=http://localhost:3000
+---
+
+# 🧠 Tech Stack
+
+## Frontend
+- React
+- Vite
+- Socket.io Client
+- WebRTC API
+- JWT handling
+- Protected Routes
+- Custom Hooks (Room Call Management)
+
+## Backend
+- Node.js
+- Express.js
+- Socket.io
+- JWT
+- bcrypt
+- MongoDB (if used)
+- CORS
+- Environment configuration with dotenv
+
+---
+
+# 📂 Project Structure
+
+```
+backend/
+├── middlewares/
+├── models/
+├── routes/
+├── index.js
+├── .env
+└── package.json
+
+frontend/
+├── src/
+│   ├── components/
+│   ├── hooks/
+│   ├── pages/
+│   ├── socket.js
+│   ├── App.jsx
+│   └── main.jsx
+└── package.json
 ```
 
-## Installation
+---
 
-Install dependencies in both apps:
+# 🔄 Complete Call Flow Summary
 
-```bash
+1. User logs in
+2. JWT is validated
+3. User joins a room
+4. Socket connection established
+5. Signaling events exchanged
+6. Peer connections created
+7. Media streams exchanged directly between users
+8. Users can join/leave dynamically without breaking room state
+
+---
+
+# ⚙ Environment Variables
+
+## Backend (.env)
+
+```
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
+
+## Frontend (.env)
+
+```
+VITE_BACKEND_URL=https://meetrix-5bop.onrender.com
+```
+
+---
+
+# 🚀 Local Development
+
+## Clone Repository
+
+```
+git clone https://github.com/SiryanshTyagi/Meetrix.git
+cd Meetrix
+```
+
+## Backend Setup
+
+```
 cd backend
 npm install
-
-cd ../frontend
-npm install
-```
-
-## Run Locally
-
-Start backend:
-
-```bash
-cd backend
-node index.js
-```
-
-Start frontend in a separate terminal:
-
-```bash
-cd frontend
 npm run dev
 ```
 
-Frontend default URL: `http://localhost:5173`
+## Frontend Setup
 
-## API Endpoints
+```
+cd frontend
+npm install
+npm run dev
+```
 
-Base URL: `http://localhost:3000`
+---
 
-- `POST /api/user/register` - Register user and return JWT
-- `POST /api/user/login` - Login user and return JWT
-- `GET /api/protected` - Example protected route (requires `Authorization: Bearer <token>`)
+# 📈 Scalability Discussion
 
-## Socket Events (High Level)
+### Current Architecture: Mesh Network
 
-- `join-room`
-- `room-full`
-- `participants`
-- `user-joined`
-- `chat`
-- `offer`
-- `answer`
-- `ice-candidate`
-- `leave-room`
-- `user-left`
+### Pros:
+- Simple implementation
+- No SFU/MCU server required
+- Efficient for small groups (≤ 5–6 users)
 
-## Notes
+### Cons:
+- Bandwidth grows quadratically
+- CPU usage increases per participant
+- Not suitable for large-scale conferencing
 
-- Socket connections are authenticated using JWT (`socket.handshake.auth.token`).
-- CORS is enforced using `FRONTEND_URL`.
-- Existing frontend README (`frontend/README.md`) is the default Vite template and can be updated separately if needed.
+### Future Upgrade Path:
+- Integrate SFU (Selective Forwarding Unit)
+- Use mediasoup or Janus
+- Implement server-side stream forwarding
+
+This shows understanding of real-time scalability tradeoffs.
+
+---
+
+# 🔐 Security Considerations
+
+- Password hashing using bcrypt
+- JWT validation middleware
+- Protected API endpoints
+- Secure socket event handling
+- Room isolation logic
+- Environment variable protection
+
+---
+
+# 🎯 What This Project Demonstrates
+
+- Deep WebRTC knowledge
+- Real-time distributed systems engineering
+- Custom signaling server implementation
+- Multi-user peer management
+- Secure authentication architecture
+- Mesh topology networking
+- Full-stack production deployment
+- System scalability awareness
+
+---
+
+# 👨‍💻 Author
+
+Siryansh Tyagi  
+Full Stack Developer | Real-Time Systems Enthusiast  
+
+GitHub: https://github.com/SiryanshTyagi  
+LinkedIn: https://www.linkedin.com/in/siryansh-tyagi-157b282ab/
+
+---
