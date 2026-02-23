@@ -148,7 +148,7 @@ N * (N - 1) / 2
 - Socket.io
 - JWT
 - bcrypt
-- MongoDB (if used)
+- MongoDB 
 - CORS
 - Environment configuration with dotenv
 
